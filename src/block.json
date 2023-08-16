@@ -5,7 +5,11 @@
 	"version": "0.1.0",
 	"title": "Blocks course - latest posts",
 	"category": "widgets",
-	"icon": "smiley",
+	"icon": "admin-post",
+	"keywords": [
+		"latest",
+		"posts"
+	],
 	"description": "Blocks course - Latest posts.",
 	"supports": {
 		"html": false
@@ -13,5 +17,11 @@
 	"textdomain": "latest-posts",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css"
+	"style": "file:./style-index.css",
+	"attributes": {
+		"numberOfPosts": {
+			"type": "number",
+			"default": 5
+		}
+	}
 }
