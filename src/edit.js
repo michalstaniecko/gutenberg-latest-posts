@@ -1,38 +1,66 @@
-/**
- * Retrieves the translation of text.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
- */
 import { __ } from '@wordpress/i18n';
-
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
- */
 import { useBlockProps } from '@wordpress/block-editor';
-
-/**
- * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
- * Those files can contain any CSS code that gets applied to the editor.
- *
- * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
- */
+import { RawHTML } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 import './editor.scss';
+import { format, dateI18n, getSettings } from '@wordpress/date';
 
-/**
- * The edit function describes the structure of your block in the context of the
- * editor. This represents what the editor will render when the block is used.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
- *
- * @return {WPElement} Element to render.
- */
-export default function Edit() {
+export default function Edit( { attributes } ) {
+	const { numberOfPosts, displayFeaturedImage } = attributes;
+
+	const posts = useSelect(
+		( select ) => {
+			return select( 'core' ).getEntityRecords( 'postType', 'post', {
+				per_page: numberOfPosts,
+				_embed: true,
+			} );
+		},
+		[ numberOfPosts ]
+	);
+
 	return (
-		<p { ...useBlockProps() }>
-			{ __( 'Boilerplate – hello from the editor!', 'boilerplate' ) }
-		</p>
+		<ul { ...useBlockProps() }>
+			{ posts &&
+				posts.map( ( post ) => {
+					const featuredImage =
+						post._embedded?.[ 'wp:featuredmedia' ]?.[ 0 ];
+					return (
+						<li key={ post.id }>
+							{ displayFeaturedImage &&
+								featuredImage !== undefined && (
+									<img
+										alt={ featuredImage.alt_text }
+										src={
+											featuredImage.media_details.sizes
+												.large.source_url
+										}
+									/>
+								) }
+							<h5>
+								<a href={ post.link }>
+									{ post.title.rendered ? (
+										<RawHTML>
+											{ post.title.rendered }
+										</RawHTML>
+									) : (
+										__( '(No title)', 'latest-posts' )
+									) }
+								</a>
+							</h5>
+							{ post.date_gmt && (
+								<time dateTime={ format( 'c', post.date_gmt ) }>
+									{ dateI18n(
+										getSettings().formats.date,
+										post.date_gmt
+									) }
+								</time>
+							) }
+							{ post.excerpt.rendered && (
+								<RawHTML>{ post.excerpt.rendered }</RawHTML>
+							) }
+						</li>
+					);
+				} ) }
+		</ul>
 	);
 }

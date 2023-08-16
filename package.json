@@ -31,7 +31,11 @@
 		"husky": "^8.0.3"
 	},
 	"dependencies": {
+		"@wordpress/block-editor": "^12.7.0",
 		"@wordpress/blocks": "^12.16.0",
+		"@wordpress/data": "^9.9.0",
+		"@wordpress/date": "^4.39.0",
+		"@wordpress/element": "^5.16.0",
 		"lint-staged": "^13.2.2"
 	}
 }
