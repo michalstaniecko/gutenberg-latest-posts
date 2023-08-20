@@ -25,7 +25,9 @@ function blocks_course_render_latest_posts_block($attributes)
 {
 	$args = array(
 		'posts_per_page' => $attributes['numberOfPosts'],
-		'post_status' => 'publish'
+		'post_status' => 'publish',
+		'order' => $attributes['order'],
+		'orderby' => $attributes['orderBy']
 	);
 
 	$recent_posts = get_posts($args);
